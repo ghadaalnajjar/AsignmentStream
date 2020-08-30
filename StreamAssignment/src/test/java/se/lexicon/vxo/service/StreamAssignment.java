@@ -157,16 +157,13 @@ public class StreamAssignment {
     public void task9() {
         int expectedSize = 892;
         LocalDate date = LocalDate.parse("1920-01-01");
-        List<PersonDto> dtoList = null;
 
         //Write code here
-/*
-        dtoList = people.stream().filter(person -> person.getDateOfBirth().isBefore(date))
-                .filter(Objects::nonNull)
-                .map((personDto -> personDto.getFirstName() + " " + personDto.getLastName() + " " + personDto.getPersonId()))
+
+        List<PersonDto> dtoList = people.stream().filter(person -> person.getDateOfBirth().isBefore(date))
+                .map(dto -> new PersonDto(dto.getPersonId(), (dto.getFirstName() + " " + dto.getLastName())))
                 .collect(Collectors.toList());
-*/
-        assertTrue(dtoList.size() == 892);
+
         assertNotNull(dtoList);
         assertEquals(expectedSize, dtoList.size());
     }
@@ -204,7 +201,8 @@ public class StreamAssignment {
 
         //Write code here
 
-        averageAge = people.stream().mapToInt(personToAge).average().orElse(0);
+        averageAge = people.stream().mapToInt(personToAge).average().orElse(0.0d);
+
 
         assertTrue(averageAge > 0);
         assertEquals(expected, averageAge, .01);
@@ -238,6 +236,10 @@ public class StreamAssignment {
                 .sorted()
                 .toArray(String[]::new);
 
+        // I have another solve :::: (1-filter persons that have palindrome names, 2-only keep the first names , 3-remove duplicate names, 4-sort elements, 5-convert to string array
+        //result = people.stream().filter(person -> person.getFirstName().equalsIgnoreCase(new StringBuilder(person.getFirstName()).reverse().toString()))
+        //       .map(Person::getFirstName).distinct().sorted().toArray(String[]::new);
+
         assertNotNull(result);
         assertArrayEquals(expected, result);
     }
@@ -250,20 +252,24 @@ public class StreamAssignment {
         int expectedSize = 107;
 
         Map<String, List<Person>> personMap = null;
+        List<Person> personList = null;
+
 
         //Write code here
-            /*
-            personMap = people.stream()
-                    .map(person -> person.getLastName())
-                    .distinct()
-                    .collect(Collectors), people.stream().map(person -> person.getFirstName() + " " + person.getLastName() + " " + person.getDateOfBirth())
-                    .collect(Collectors.toList());
 
-
+        personMap = people.stream().collect(Collectors.groupingBy(Person::getFirstName));
+        personMap = new HashMap<>();
+                List<String> keys = people.stream().map(Person::getLastName)
+                .distinct()
+                .collect(Collectors.toList());
+                for (String key : keys) {
+                    List<Person> result =  people.stream().filter(person -> person.getLastName().equalsIgnoreCase(key))
+                            .collect(Collectors.toList());
+                    personMap.put(key, result);
+                }
 
             assertNotNull(personMap);
             assertEquals(expectedSize, personMap.size());
-        */
     }
 
     /**
